@@ -6,16 +6,26 @@ class Round
         @pot = 0
         @bet = 0
         @common_cards = []
-        @used_hearts = []
-        @used_diamonds = []
-        @used_clubs = []
-        @used_spades = []
+        @used_cards = []
     end
 
     def select_card
         suit = ['heart', 'diamond', 'club', 'spade']
-        card = rand(2..14)
-        selected_card = {suit: suit.sample, card: card}
-        puts selected_card
+        selected_card = {suit: suit.sample, card: rand(2..14)}
+        if @used_cards.include?(selected_card)
+            select_card
+        else
+            @common_cards << selected_card
+            @used_cards << selected_card
+        end
+    end
+
+    def display_common_cards
+        puts @common_cards
+    end
+
+    def deal_two_cards
+        select_card
+        select_card
     end
 end
