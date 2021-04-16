@@ -1,6 +1,4 @@
-require_relative('./round')
-require_relative('./player')
-
+require_relative './player'
 class Round
     attr_accessor :round_number, :pot, :bet
 
@@ -18,18 +16,23 @@ class Round
         if @used_cards.include?(selected_card)
             select_card
         else
-            @common_cards << selected_card
             @used_cards << selected_card
         end
-        puts selected_card
+        selected_card
+    end
+
+    def deal_hand
+        puts "Player 1 cards:"
+        @player_cards << select_card
+        @player_cards << select_card
+        puts @player_cards
     end
 
     def display_common_cards
         puts @common_cards
     end
 
-    def deal_two_cards
-        select_card
+    def deal_card
         select_card
     end
 end
