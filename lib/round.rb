@@ -14,7 +14,7 @@ class Round
         suit = ['Heart', 'Diamond', 'Club', 'Spade']
         selected_card = {suit: suit.sample, card: rand(2..14)}
         if @used_cards.include?(selected_card)
-            select_card
+            selected_card = select_card
         else
             @used_cards << selected_card
         end
@@ -47,18 +47,4 @@ class Round
     def update_river(hand)
         hand << @common_cards[4]
     end
-
-    # def deal_river
-    #     @common_cards << select_card
-    #     @common_cards << select_card
-    #     @common_cards << select_card
-    # end
-
-    # def deal_turn
-    #     @common_cards << select_card
-    # end
-
-    # def deal_flop
-    #     @common_cards << select_card
-    # end
 end
