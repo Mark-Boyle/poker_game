@@ -19,4 +19,24 @@ class Player
         puts ' '
     end
     
+    def check_for_pairs
+        card_number = []
+        @cards.each_index do | e |
+            card_number << @cards[e][:card].to_i
+            end
+            puts ' '
+
+        a = card_number.tally
+        
+        b = a.keep_if{|key, value| value == 2}
+
+        case b.length 
+        when 0
+            puts "No pairs"
+        when 1
+            puts "You have a pair of #{b.keys[0]}"
+        when 2
+            puts "You have a pair of #{b.keys[0]} and #{b.keys[1]}"
+        end
+    end
 end

@@ -15,11 +15,10 @@ class Play
     def run
         deal_hand
         deal_flop
-        @round.display_common_cards
         deal_turn
-        @round.display_common_cards
         deal_river
         @round.display_common_cards
+        @player1.check_for_pairs
     end
 
     def deal_hand

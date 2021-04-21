@@ -22,7 +22,7 @@ class Round
     end
 
     def display_common_cards
-        puts ' '
+        # puts ' '
         puts 'On the Table:'
         @common_cards.each_index do |index|
           print "#{@common_cards[index][:suit]} #{@common_cards[index][:card]}   "
