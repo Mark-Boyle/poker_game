@@ -19,6 +19,17 @@ class Play
         deal_river
         @round.display_common_cards
         @player1.check_for_pairs
+        @opponent1.check_for_pairs
+        @opponent2.check_for_pairs
+        @opponent3.check_for_pairs
+        @player1.check_for_three_of_a_kind
+        @opponent1.check_for_three_of_a_kind
+        @opponent2.check_for_three_of_a_kind
+        @opponent3.check_for_three_of_a_kind
+        @player1.check_for_full_house
+        @opponent1.check_for_full_house
+        @opponent2.check_for_full_house
+        @opponent3.check_for_full_house
     end
 
     def deal_hand
