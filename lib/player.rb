@@ -51,7 +51,7 @@ class Player
     end
 
     def winning_combination
-        [@winning_combinations[0][:rank]]
+        [@winning_combinations[0][:rank], @winning_combinations[0][:name]]
     end
 
     def check_holding_cards
@@ -60,7 +60,7 @@ class Player
         else
             @high_card = @cards[1][:card]
         end
-        @winning_combinations << {rank: 10 + (@high_card * 0.1), message: "You have #{@high_card}-high", name: @name}
+        @winning_combinations << {rank: 10 - (@high_card * 0.01), message: "You have #{@high_card}-high", name: @name}
     end
     
     def check_for_pairs
@@ -71,11 +71,11 @@ class Player
 
         case b.length 
         when 1
-            @winning_combinations << {rank: 9 + (@high_card * 0.1), message: "You have a pair of #{b.keys[0]}", name: @name}
+            @winning_combinations << {rank: 9 - (b.keys.max * 0.01) - (b.keys.min * 0.0001), message: "You have a pair of #{b.keys[0]}", name: @name}
         when 2
-            @winning_combinations << {rank: 8 + (@high_card * 0.1), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @winning_combinations << {rank: 8 - (b.keys.max * 0.01) - (b.keys.min * 0.0001), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
         when 3
-            @winning_combinations << {rank: 8 + (@high_card * 0.1), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @winning_combinations << {rank: 8 - (b.keys.max * 0.01) - (b.keys.min * 0.0001), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
         end
     end
 
@@ -83,21 +83,22 @@ class Player
         card_number = organise_card_numbers
         a = card_number.tally
         b = a.keep_if{|key, value| value == 3}
-        @winning_combinations << {rank: 7 + (@high_card * 0.1), message: "You have three of a kind of #{b.keys[0]}", name: @name}  unless b.empty?
+        @winning_combinations << {rank: 7 - (b.keys.max * 0.01), message: "You have three of a kind of #{b.keys[0]}", name: @name}  unless b.empty?
     end
 
     def check_for_four_of_a_kind
         card_number = organise_card_numbers
         a = card_number.tally
         b = a.keep_if{|key, value| value == 4}
-        @winning_combinations << {rank: 3 + (@high_card * 0.1), message: "You have four of a kind of #{b.keys[0]}", name: @name} unless b.empty?
+        @winning_combinations << {rank: 3 - (b.keys.max * 0.01), message: "You have four of a kind of #{b.keys[0]}", name: @name} unless b.empty?
     end
 
     def check_for_full_house
         card_number = organise_card_numbers
         a = card_number.tally
         b = a.keep_if{|key, value| value == 3 || value == 2}
-        @winning_combinations << {rank: 4 + (@high_card * 0.1), message: "You have a full house!", name: @name} if b.length > 1 && b.value?(3)
+        c = a.keep_if{|key, value| value == 3}
+        @winning_combinations << {rank: 4 - (c.keys.max * 0.01), message: "You have a full house!", name: @name} if b.length > 1 && b.value?(3)
     end
 
     def check_for_straight
@@ -108,7 +109,7 @@ class Player
                 straight << num + 1
                   num += 1
             end
-            @winning_combinations << {rank: 6 + (@high_card * 0.1), message: "You have a straight!", name: @name} if straight.length == 5
+            @winning_combinations << {rank: 6 - (straight.max * 0.01), message: "You have a straight!", name: @name} if straight.length == 5
         end
     end
 
@@ -116,6 +117,7 @@ class Player
         card_suits = organise_suits
         a = card_suits.tally 
         b = a.keep_if{|key, value| value >= 5}
-        @winning_combinations << {rank: 5 + (@high_card * 0.1), message: "You have a flush!", name: @name} unless b.empty?
+        c = b.keys
+        @winning_combinations << {rank: 5, message: "You have a flush!", name: @name} unless b.empty?
     end
 end

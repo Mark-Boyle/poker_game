@@ -99,6 +99,6 @@ class Play
         winner.sort_by!{|k| k[:rank]}
         puts 'After sorting'
         puts winner
-        # puts "The winner is #{winner}"
+        puts "The winner is #{winner[0][:name]}"
     end
 end
