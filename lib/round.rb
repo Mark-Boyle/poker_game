@@ -1,11 +1,12 @@
 require_relative './player'
+require_relative 'play'
 class Round
-    attr_accessor :round_number, :pot, :bet
+    attr_accessor :round_number, :pot, :highest_bet
 
     def initialize
         @round_number = 1
         @pot = 0
-        @bet = 3
+        @highest_bet = 0
         @common_cards = []
         @used_cards = []
     end
@@ -46,5 +47,13 @@ class Round
 
     def update_river(hand)
         hand << @common_cards[4]
+    end
+
+    def display_pot
+        puts "Pot:#{@pot}"
+    end
+
+    def increase_pot(amount)
+        @pot += amount
     end
 end

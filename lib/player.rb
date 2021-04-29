@@ -1,19 +1,24 @@
-class Player
-  attr_accessor :chips, :status, :cards, :winning_combinations
+require_relative 'play'
+require_relative 'round'
 
-    def initialize(type, name)
+class Player
+  attr_accessor :chips, :status, :cards, :winning_combinations, :hand_ranking, :player_bet
+
+    def initialize(type, name, round)
         @name = name
         @chips = 250
-        @status = 'In play'
+        @status = 'In Play'
         @cards = []
         @hand_ranking = 0
         @type = type
         @winning_combinations = []
         @high_card = 0
+        @player_bet = 0
+        @round = round
     end
 
     def display_hand
-        puts 'Player hand:'
+        puts "#{@name}:"
         print "#{@cards[0][:suit]} #{@cards[0][:card]}   "
         puts "#{@cards[1][:suit]} #{@cards[1][:card]}"
         puts ' '
@@ -42,17 +47,18 @@ class Player
         check_for_full_house
         check_for_straight
         check_for_flush
+        check_for_straight_flush
     end
 
     def display_winning_combination
-        puts ' '
+        # puts ' '
         @winning_combinations.sort_by!{|k| k[:rank]}
-        puts @winning_combinations[0][:message] unless @winning_combinations.empty?
+        # puts @winning_combinations[0][:message] unless @winning_combinations.empty?
     end
 
-    def winning_combination
-        [@winning_combinations[0][:rank], @winning_combinations[0][:name]]
-    end
+    # def winning_combination
+    #     [@winning_combinations[0][:rank], @winning_combinations[0][:name]]
+    # end
 
     def check_holding_cards
         if @cards[0][:card] > @cards[1][:card]
@@ -61,6 +67,9 @@ class Player
             @high_card = @cards[1][:card]
         end
         @winning_combinations << {rank: 10 - (@high_card * 0.01), message: "You have #{@high_card}-high", name: @name}
+        @hand_ranking =  @cards[0][:card] + @cards[1][:card]
+        @hand_ranking += 20 unless @cards[0][:card] != @cards[1][:card] 
+        # puts @hand_ranking
     end
     
     def check_for_pairs
@@ -71,11 +80,14 @@ class Player
 
         case b.length 
         when 1
-            @winning_combinations << {rank: 9 - (b.keys.max * 0.01) - (b.keys.min * 0.0001), message: "You have a pair of #{b.keys[0]}", name: @name}
+            @winning_combinations << {rank: ((9 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]}", name: @name}
+            @hand_ranking += 20
         when 2
-            @winning_combinations << {rank: 8 - (b.keys.max * 0.01) - (b.keys.min * 0.0001), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @winning_combinations << {rank: ((8 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @hand_ranking += 40
         when 3
-            @winning_combinations << {rank: 8 - (b.keys.max * 0.01) - (b.keys.min * 0.0001), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @winning_combinations << {rank: ((8 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @hand_ranking += 40
         end
     end
 
@@ -84,6 +96,7 @@ class Player
         a = card_number.tally
         b = a.keep_if{|key, value| value == 3}
         @winning_combinations << {rank: 7 - (b.keys.max * 0.01), message: "You have three of a kind of #{b.keys[0]}", name: @name}  unless b.empty?
+        @hand_ranking += 60 unless b.empty?
     end
 
     def check_for_four_of_a_kind
@@ -91,14 +104,16 @@ class Player
         a = card_number.tally
         b = a.keep_if{|key, value| value == 4}
         @winning_combinations << {rank: 3 - (b.keys.max * 0.01), message: "You have four of a kind of #{b.keys[0]}", name: @name} unless b.empty?
+        @hand_ranking += 80 unless b.empty?
     end
 
     def check_for_full_house
         card_number = organise_card_numbers
         a = card_number.tally
         b = a.keep_if{|key, value| value == 3 || value == 2}
-        c = a.keep_if{|key, value| value == 3}
-        @winning_combinations << {rank: 4 - (c.keys.max * 0.01), message: "You have a full house!", name: @name} if b.length > 1 && b.value?(3)
+        # c = a.keep_if{|key, value| value == 3}
+        @winning_combinations << {rank: 4 - (b.keys.max * 0.01), message: "You have a full house!", name: @name} if b.length > 1 && b.value?(3)
+        @hand_ranking += 70 if b.length > 1 && b.value?(3)
     end
 
     def check_for_straight
@@ -110,6 +125,7 @@ class Player
                   num += 1
             end
             @winning_combinations << {rank: 6 - (straight.max * 0.01), message: "You have a straight!", name: @name} if straight.length == 5
+            @hand_ranking += 50  unless straight.length != 5
         end
     end
 
@@ -117,7 +133,72 @@ class Player
         card_suits = organise_suits
         a = card_suits.tally 
         b = a.keep_if{|key, value| value >= 5}
-        c = b.keys
+        # c = b.keys
         @winning_combinations << {rank: 5, message: "You have a flush!", name: @name} unless b.empty?
+        @hand_ranking += 60 unless b.empty?
     end
+
+    def check_for_straight_flush
+        ranks = []
+        @winning_combinations.each_index do | e |
+            ranks << @winning_combinations[e][:rank]
+        end
+        ranks = ranks.map!{ | num | num.to_i}
+        if ranks.include?(4) && ranks.include?(5)
+            @winning_combinations << {rank: 2, message: "You have a straight flush!", name: @name}
+            @hand_ranking += 90
+        end
+    end
+
+    def decide_action
+        if @status == 'In Play'
+            a = @hand_ranking - (@cards.length)
+            case a
+            when 0..10
+                fold
+            when 10..20
+                check_or_call
+            when 20..30
+                low_bet
+            when 30..50
+                medium_bet
+            when a > 50 
+                high_bet
+            end
+        end
+    end
+
+    def fold
+        @status = 'Folded'
+    end
+
+    def check_or_call
+        @round.increase_pot(@player_bet)
+        @chips += @player_bet
+        
+    end
+
+    def low_bet
+        @round.increase_pot(20)
+       @player_bet += 20
+       @chips -= 20
+    end
+
+    def medium_bet
+        @round.increase_pot(30)
+        @player_bet += 30
+        @chips -= 30
+    end
+
+     def high_bet
+        @round.increase_pot(40)
+        @player_bet += 40
+        @chips -= 40
+     end
+
+     def all_in
+        @round.increase_pot(@chips)
+        @player_bet += @chips
+        @chips -= @chips
+     end
 end
