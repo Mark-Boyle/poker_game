@@ -14,6 +14,7 @@ class Player
         @winning_combinations = []
         @high_card = 0
         @player_bet = 0
+        @max_bet = @player_bet + 20
         @round = round
     end
 
@@ -22,6 +23,10 @@ class Player
         print "#{@cards[0][:suit]} #{@cards[0][:card]}   "
         puts "#{@cards[1][:suit]} #{@cards[1][:card]}"
         puts ' '
+    end
+
+    def display_status
+        puts "#{@name}   status: #{@status}    Hand Rank: #{@hand_ranking - @cards.length}   Bet:#{@player_bet}"
     end
 
     def organise_card_numbers
@@ -154,51 +159,54 @@ class Player
         if @status == 'In Play'
             a = @hand_ranking - (@cards.length)
             case a
-            when 0..10
+            when 0..9
                 fold
-            when 10..20
+            when 10..14
                 check_or_call
-            when 20..30
+            when 15..30
                 low_bet
-            when 30..50
+            when 31..50
                 medium_bet
-            when a > 50 
+            when 50..300 
                 high_bet
             end
         end
     end
 
     def fold
-        @status = 'Folded'
+        @status = 'Folded '
     end
 
     def check_or_call
-        @round.increase_pot(@player_bet)
-        @chips += @player_bet
+        @round.increase_pot(@round::highest_bet - @player_bet)
+        @chips -= (@round::highest_bet - @player_bet)
+        @max_bet < @round::highest_bet ? fold : @player_bet = @round::highest_bet
         
     end
 
     def low_bet
-        @round.increase_pot(20)
-       @player_bet += 20
-       @chips -= 20
+        @player_bet += 20
+        @player_bet < @round::highest_bet ? check_or_call : @round.increase_pot(20) && @chips -= 20
+        @round.increase_highest_bet(@player_bet)
     end
 
     def medium_bet
-        @round.increase_pot(30)
         @player_bet += 30
-        @chips -= 30
+        @player_bet < @round::highest_bet ? check_or_call : @round.increase_pot(30) && @chips -= 30
+        @round.increase_highest_bet(@player_bet)
     end
 
      def high_bet
-        @round.increase_pot(40)
         @player_bet += 40
-        @chips -= 40
-     end
+        @player_bet < @round::highest_bet ? check_or_call : @round.increase_pot(40) && @chips -= 40
+        @round.increase_highest_bet(@player_bet)
+    end
 
      def all_in
-        @round.increase_pot(@chips)
-        @player_bet += @chips
-        @chips -= @chips
+        if @player_bet != @round::highest_bet || @player_bet == 0
+            @round.increase_pot(@chips)
+            @player_bet += @chips
+            @chips -= @chips
+        end
      end
 end

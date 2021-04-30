@@ -5,7 +5,7 @@ class Play
   attr_accessor :player1, :opponet1, :opponet2, :opponet3
 
     def initialize(round)
-        @player1 = Player.new('Human', 'Mark', round)
+        @player1 = Player.new('Human', 'Mark      ', round)
         @opponent1 = Player.new('Computer', 'Opponent 1', round)
         @opponent2 = Player.new('Computer', 'Opponent 2', round)
         @opponent3 = Player.new('Computer', 'Opponent 3', round)
@@ -22,8 +22,19 @@ class Play
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action
+        make_bets
+        # sleep(3)
+        @player1.display_status
+        # sleep(2)
+        @opponent1.display_status
+        # sleep(2)
+        @opponent2.display_status
+        # sleep(2)
+        @opponent3.display_status
+        # sleep(2)
         @round.display_pot
         deal_flop
+        @round.display_common_cards
         @player1.analyse_hand
         @opponent1.analyse_hand
         @opponent2.analyse_hand
@@ -32,9 +43,20 @@ class Play
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action
-        @round.display_common_cards
+        make_bets
+        # sleep(3)
+        puts ' '
+        @player1.display_status
+        # sleep(2)
+        @opponent1.display_status
+        # sleep(2)
+        @opponent2.display_status
+        # sleep(2)
+        @opponent3.display_status
+        # sleep(2)
         @round.display_pot
         deal_turn
+        @round.display_common_cards
         @player1.analyse_hand
         @opponent1.analyse_hand
         @opponent2.analyse_hand
@@ -43,19 +65,18 @@ class Play
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action
-        @round.display_common_cards
+        make_bets
+        # sleep(1)
+        puts ' '
+        @player1.display_status
+        @opponent1.display_status
+        @opponent2.display_status
+        @opponent3.display_status
+        # sleep(1)
         @round.display_pot
+        puts ' '
         deal_river
-        @player1.analyse_hand
-        @opponent1.analyse_hand
-        @opponent2.analyse_hand
-        @opponent3.analyse_hand
-        @player1.decide_action
-        @opponent1.decide_action
-        @opponent2.decide_action
-        @opponent3.decide_action
         @round.display_common_cards
-        @round.display_pot
         @player1.analyse_hand
         @opponent1.analyse_hand
         @opponent2.analyse_hand
@@ -64,12 +85,22 @@ class Play
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action
-     
+        make_bets
+        # sleep(1)
+        puts ' '
+        @player1.display_status
+        @opponent1.display_status
+        @opponent2.display_status
+        @opponent3.display_status
+        # sleep(1)
+        @round.display_pot
+        puts ' '
         @player1.display_winning_combination
         @opponent1.display_winning_combination
         @opponent2.display_winning_combination
         @opponent3.display_winning_combination
         pick_winner
+        # sleep(1)
         puts "Pot: #{@round::pot}"
     end
 
@@ -123,9 +154,6 @@ class Play
         @player1.display_hand
     end
 
-    def display_pot
-        puts "Pot: #{@pot}"
-    end
 
     def pick_winner
         
@@ -135,14 +163,42 @@ class Play
         @opponent3::winning_combinations[0]]
         # puts @player1::winning_combinations
         winner.sort_by!{|k| k[:rank]}
-        puts 'After sorting'
         puts winner
-        puts @player1::hand_ranking
-        puts @opponent1::hand_ranking
-        puts @opponent2::hand_ranking
-        puts @opponent3::hand_ranking
+        puts ' '
+        # puts @player1::hand_ranking
+        # puts @opponent1::hand_ranking
+        # puts @opponent2::hand_ranking
+        # puts @opponent3::hand_ranking
         puts "The winner is #{winner[0][:name]}"
     end
 
-    
+    def make_bets
+        players = [@player1, @opponent1, @opponent2, @opponent3]
+        folded = players.each do |player| 
+            if player::status == 'In Play' && player::player_bet != @round::highest_bet
+                player.decide_action
+            end
+        end
+        # puts 'test'
+        # puts players.length unless players.length == nil
+        # puts players[0]::status
+        
+        # puts 'test'
+      
+        # while players[0]::player_bet != players[-1]::player_bet
+        #     @player1.decide_action
+        #     @opponent1.decide_action
+        #     @opponent2.decide_action
+        #     @opponent3.decide_action
+        #     players.each{| player | players.delete(player) unless player::status != 'Folded'}
+        # end
+
+        # 4.times do
+        #     @player1.decide_action
+        #     @opponent1.decide_action
+        #     @opponent2.decide_action
+        #     @opponent3.decide_action
+        # end
+
+    end
 end

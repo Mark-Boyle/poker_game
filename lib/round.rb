@@ -50,10 +50,15 @@ class Round
     end
 
     def display_pot
+        puts ' '
         puts "Pot:#{@pot}"
     end
 
     def increase_pot(amount)
         @pot += amount
+    end
+
+    def increase_highest_bet(amount)
+        @highest_bet = amount unless amount < @highest_bet 
     end
 end
