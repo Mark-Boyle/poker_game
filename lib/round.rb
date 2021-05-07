@@ -61,4 +61,12 @@ class Round
     def increase_highest_bet(amount)
         @highest_bet = amount unless amount < @highest_bet 
     end
+
+    def reset_round
+        @round_number += 1
+        @pot = 0
+        @highest_bet = 0
+        @common_cards = []
+        @used_cards = []
+    end
 end

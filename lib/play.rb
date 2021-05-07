@@ -1,5 +1,6 @@
 require_relative('./player')
 require_relative('round')
+require_relative('display')
 
 class Play
   attr_accessor :player1, :opponet1, :opponet2, :opponet3
@@ -13,6 +14,7 @@ class Play
     end
 
     def run
+        intro_page
         deal_hand
         @player1.check_holding_cards
         @opponent1.check_holding_cards
@@ -102,6 +104,11 @@ class Play
         pick_winner
         # sleep(1)
         puts "Pot: #{@round::pot}"
+        @player1.display_chips
+        @opponent1.display_chips
+        @opponent2.display_chips
+        @opponent3.display_chips
+        finish_round
     end
 
    
@@ -156,7 +163,7 @@ class Play
 
 
     def pick_winner
-        
+        players = [@player1, @opponent1, @opponent2, @opponent3]
         winner = [@player1::winning_combinations[0],
         @opponent1::winning_combinations[0],
         @opponent2::winning_combinations[0],
@@ -170,13 +177,16 @@ class Play
         # puts @opponent2::hand_ranking
         # puts @opponent3::hand_ranking
         puts "The winner is #{winner[0][:name]}"
+        players.each_index {| i | puts players[i]::name == winner[0][:name] ? players[i]::chips += @round::pot : false} 
+            # == winner[0][:name] ? puts "#{players[i]::chips}" : puts 'no name'}
+        # players[0]::name == winner[0][:name]
     end
 
     def make_bets
         players = [@player1, @opponent1, @opponent2, @opponent3]
-        folded = players.each do |player| 
+        players.each do |player| 
             if player::status == 'In Play' && player::player_bet != @round::highest_bet
-                player.decide_action
+                player.check_or_call
             end
         end
         # puts 'test'
@@ -200,5 +210,13 @@ class Play
         #     @opponent3.decide_action
         # end
 
+    end
+
+    def finish_round
+        @player1.reset_player
+        @opponent1.reset_player
+        @opponent2.reset_player
+        @opponent3.reset_player
+        @round.reset_round
     end
 end
