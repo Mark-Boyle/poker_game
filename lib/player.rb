@@ -84,7 +84,7 @@ class Player
         else
             @high_card = @cards[1][:card]
         end
-        @winning_combinations << {rank: 10 - (@high_card * 0.01), message: "You have #{@high_card}-high", name: @name}
+        @winning_combinations << {rank: 10 - (@high_card * 0.01), message: "You have #{@high_card}-high", name: @name, status: @status}
         @hand_ranking =  @cards[0][:card] + @cards[1][:card]
         @hand_ranking += 20 unless @cards[0][:card] != @cards[1][:card] 
         # puts @hand_ranking
@@ -98,13 +98,13 @@ class Player
 
         case b.length 
         when 1
-            @winning_combinations << {rank: ((9 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]}", name: @name}
+            @winning_combinations << {rank: ((9 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]}", name: @name, status: @status}
             @hand_ranking += 20
         when 2
-            @winning_combinations << {rank: ((8 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @winning_combinations << {rank: ((8 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name, status: @status}
             @hand_ranking += 40
         when 3
-            @winning_combinations << {rank: ((8 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name}
+            @winning_combinations << {rank: ((8 - (b.keys.max * 0.01)) - (b.keys.min * 0.0001)).round(4), message: "You have a pair of #{b.keys[0]} and #{b.keys[1]}", name: @name, status: @status}
             @hand_ranking += 40
         end
     end
@@ -113,7 +113,7 @@ class Player
         card_number = organise_card_numbers
         a = card_number.tally
         b = a.keep_if{|key, value| value == 3}
-        @winning_combinations << {rank: 7 - (b.keys.max * 0.01), message: "You have three of a kind of #{b.keys[0]}", name: @name}  unless b.empty?
+        @winning_combinations << {rank: 7 - (b.keys.max * 0.01), message: "You have three of a kind of #{b.keys[0]}", name: @name, status: @status}  unless b.empty?
         @hand_ranking += 60 unless b.empty?
     end
 
@@ -121,7 +121,7 @@ class Player
         card_number = organise_card_numbers
         a = card_number.tally
         b = a.keep_if{|key, value| value == 4}
-        @winning_combinations << {rank: 3 - (b.keys.max * 0.01), message: "You have four of a kind of #{b.keys[0]}", name: @name} unless b.empty?
+        @winning_combinations << {rank: 3 - (b.keys.max * 0.01), message: "You have four of a kind of #{b.keys[0]}", name: @name, status: @status} unless b.empty?
         @hand_ranking += 80 unless b.empty?
     end
 
@@ -130,7 +130,7 @@ class Player
         a = card_number.tally
         b = a.keep_if{|key, value| value == 3 || value == 2}
         # c = a.keep_if{|key, value| value == 3}
-        @winning_combinations << {rank: 4 - (b.keys.max * 0.01), message: "You have a full house!", name: @name} if b.length > 1 && b.value?(3)
+        @winning_combinations << {rank: 4 - (b.keys.max * 0.01), message: "You have a full house!", name: @name, status: @status} if b.length > 1 && b.value?(3)
         @hand_ranking += 70 if b.length > 1 && b.value?(3)
     end
 
@@ -142,7 +142,7 @@ class Player
                 straight << num + 1
                   num += 1
             end
-            @winning_combinations << {rank: 6 - (straight.max * 0.01), message: "You have a straight!", name: @name} if straight.length == 5
+            @winning_combinations << {rank: 6 - (straight.max * 0.01), message: "You have a straight!", name: @name, status: @status} if straight.length == 5
             @hand_ranking += 50  unless straight.length != 5
         end
     end
@@ -152,7 +152,7 @@ class Player
         a = card_suits.tally 
         b = a.keep_if{|key, value| value >= 5}
         # c = b.keys
-        @winning_combinations << {rank: 5, message: "You have a flush!", name: @name} unless b.empty?
+        @winning_combinations << {rank: 5, message: "You have a flush!", name: @name, status: @status} unless b.empty?
         @hand_ranking += 60 unless b.empty?
     end
 
@@ -163,7 +163,7 @@ class Player
         end
         ranks = ranks.map!{ | num | num.to_i}
         if ranks.include?(4) && ranks.include?(5)
-            @winning_combinations << {rank: 2, message: "You have a straight flush!", name: @name}
+            @winning_combinations << {rank: 2, message: "You have a straight flush!", name: @name, status: @status}
             @hand_ranking += 90
         end
     end

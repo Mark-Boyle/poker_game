@@ -164,22 +164,11 @@ class Play
 
     def pick_winner
         players = [@player1, @opponent1, @opponent2, @opponent3]
-        winner = [@player1::winning_combinations[0],
-        @opponent1::winning_combinations[0],
-        @opponent2::winning_combinations[0],
-        @opponent3::winning_combinations[0]]
-        # puts @player1::winning_combinations
-        winner.sort_by!{|k| k[:rank]}
-        puts winner
-        puts ' '
-        # puts @player1::hand_ranking
-        # puts @opponent1::hand_ranking
-        # puts @opponent2::hand_ranking
-        # puts @opponent3::hand_ranking
-        puts "The winner is #{winner[0][:name]}"
-        players.each_index {| i | puts players[i]::name == winner[0][:name] ? players[i]::chips += @round::pot : false} 
-            # == winner[0][:name] ? puts "#{players[i]::chips}" : puts 'no name'}
-        # players[0]::name == winner[0][:name]
+        players.delete_if{|k| k::status == 'Folded '}
+        players.sort_by!{|k| k::winning_combinations[0][:rank]}
+        players.each{|k| puts k::winning_combinations[0]}
+        puts "Winner is #{players[0]::name}"
+        puts players[0]::chips += @round::pot
     end
 
     def make_bets
