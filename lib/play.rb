@@ -35,6 +35,7 @@ class Play
         @opponent3.display_status
         # sleep(2)
         @round.display_pot
+        return pick_winner if check_for_winner
         deal_flop
         @round.display_common_cards
         @player1.analyse_hand
@@ -57,6 +58,7 @@ class Play
         @opponent3.display_status
         # sleep(2)
         @round.display_pot
+        return pick_winner if check_for_winner
         deal_turn
         @round.display_common_cards
         @player1.analyse_hand
@@ -77,6 +79,7 @@ class Play
         # sleep(1)
         @round.display_pot
         puts ' '
+        return pick_winner if check_for_winner
         deal_river
         @round.display_common_cards
         @player1.analyse_hand
@@ -103,12 +106,12 @@ class Play
         @opponent3.display_winning_combination
         pick_winner
         # sleep(1)
-        puts "Pot: #{@round::pot}"
-        @player1.display_chips
-        @opponent1.display_chips
-        @opponent2.display_chips
-        @opponent3.display_chips
-        finish_round
+        # puts "Pot: #{@round::pot}"
+        # @player1.display_chips
+        # @opponent1.display_chips
+        # @opponent2.display_chips
+        # @opponent3.display_chips
+        # finish_round
     end
 
    
@@ -161,14 +164,27 @@ class Play
         @player1.display_hand
     end
 
+    def check_for_winner
+        players = [@player1, @opponent1, @opponent2, @opponent3]
+        players.delete_if{|k| k::status == 'Folded '}
+        players.length == 1
+    end
+
 
     def pick_winner
         players = [@player1, @opponent1, @opponent2, @opponent3]
         players.delete_if{|k| k::status == 'Folded '}
+        players.each{|p| p::winning_combinations.sort_by!{|k| k[:rank]}}
         players.sort_by!{|k| k::winning_combinations[0][:rank]}
         players.each{|k| puts k::winning_combinations[0]}
-        puts "Winner is #{players[0]::name}"
-        puts players[0]::chips += @round::pot
+        puts "Winner is #{players[0]::name}" unless players.empty?
+        puts players[0]::chips += @round::pot unless players.empty?
+        puts "Pot: #{@round::pot}"
+        @player1.display_chips
+        @opponent1.display_chips
+        @opponent2.display_chips
+        @opponent3.display_chips
+        finish_round
     end
 
     def make_bets

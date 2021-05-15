@@ -63,6 +63,7 @@ class Round
     end
 
     def reset_round
+        puts "Round number: #{@round_number}"
         @round_number += 1
         @pot = 0
         @highest_bet = 0

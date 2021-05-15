@@ -69,14 +69,9 @@ class Player
     end
 
     def display_winning_combination
-        # puts ' '
         @winning_combinations.sort_by!{|k| k[:rank]}
         # puts @winning_combinations[0][:message] unless @winning_combinations.empty?
     end
-
-    # def winning_combination
-    #     [@winning_combinations[0][:rank], @winning_combinations[0][:name]]
-    # end
 
     def check_holding_cards
         if @cards[0][:card] > @cards[1][:card]
@@ -86,8 +81,9 @@ class Player
         end
         @winning_combinations << {rank: 10 - (@high_card * 0.01), message: "You have #{@high_card}-high", name: @name, status: @status}
         @hand_ranking =  @cards[0][:card] + @cards[1][:card]
-        @hand_ranking += 20 unless @cards[0][:card] != @cards[1][:card] 
-        # puts @hand_ranking
+        @hand_ranking += 20 if @cards[0][:card] == @cards[1][:card] 
+        @winning_combinations << {rank: (9 - (@cards[0][:card] * 0.01).round(2)), message: "You have a pair of #{@cards[0][:card]}", name: @name, status: @status} if @cards[0][:card] == @cards[1][:card]
+        puts @winning_combinations
     end
     
     def check_for_pairs
