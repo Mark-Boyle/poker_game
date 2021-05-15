@@ -20,7 +20,7 @@ class Play
         @opponent1.check_holding_cards
         @opponent2.check_holding_cards
         @opponent3.check_holding_cards
-        @player1.decide_action
+        @player1.choose_action
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action
@@ -42,7 +42,7 @@ class Play
         @opponent1.analyse_hand
         @opponent2.analyse_hand
         @opponent3.analyse_hand
-        @player1.decide_action
+        @player1.choose_action if @player1::status == 'In Play'
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action
@@ -65,7 +65,7 @@ class Play
         @opponent1.analyse_hand
         @opponent2.analyse_hand
         @opponent3.analyse_hand
-        @player1.decide_action
+        @player1.choose_action if @player1::status == 'In Play'
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action
@@ -86,7 +86,7 @@ class Play
         @opponent1.analyse_hand
         @opponent2.analyse_hand
         @opponent3.analyse_hand
-        @player1.decide_action
+        @player1.choose_action if @player1::status == 'In Play'
         @opponent1.decide_action
         @opponent2.decide_action
         @opponent3.decide_action

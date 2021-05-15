@@ -1,5 +1,6 @@
 require_relative 'play'
 require_relative 'round'
+require "tty-prompt"
 
 class Player
   attr_accessor :chips, :status, :cards, :winning_combinations, :hand_ranking, :player_bet, :name, :max_bet, :round
@@ -83,7 +84,6 @@ class Player
         @hand_ranking =  @cards[0][:card] + @cards[1][:card]
         @hand_ranking += 20 if @cards[0][:card] == @cards[1][:card] 
         @winning_combinations << {rank: (9 - (@cards[0][:card] * 0.01).round(2)), message: "You have a pair of #{@cards[0][:card]}", name: @name, status: @status} if @cards[0][:card] == @cards[1][:card]
-        puts @winning_combinations
     end
     
     def check_for_pairs
@@ -229,8 +229,51 @@ class Player
      def all_in
         @round.increase_pot(@chips)
         @player_bet += @chips
-        @chips == 0
+        @chips = 0
         @round::highest_bet = @player_bet unless @player_bet < @round::highest_bet
         @status = 'All In'
      end
+
+    def choose_action
+        prompt = TTY::Prompt.new
+        action = prompt.select("Choose Action:") do |menu|
+            menu.choice "Fold"
+            menu.choice "Check/Call"
+            menu.choice "Raise"
+        end
+
+        puts action
+
+        case action
+        when "Fold"
+            fold
+        when "Check/Call"
+            check_or_call
+        when "Raise"
+            raise_bet
+        end
+    end
+
+    def raise_bet
+        prompt = TTY::Prompt.new
+        amount = prompt.select("How much would you like to raise by?") do |menu|
+            menu.choice "20"
+            menu.choice "30"
+            menu.choice "40"
+            menu.choice "All In"
+        end
+
+        puts amount
+
+        case amount
+        when "20"
+            low_bet
+        when "30"
+            medium_bet
+        when "40"
+            high_bet
+        when "All In"
+            all_in
+        end
+    end
 end
