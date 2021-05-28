@@ -25,6 +25,7 @@ class Play
         @opponent2.decide_action
         @opponent3.decide_action
         make_bets
+        display_all_hands
         # sleep(3)
         @player1.display_status
         # sleep(2)
@@ -47,6 +48,7 @@ class Play
         @opponent2.decide_action
         @opponent3.decide_action
         make_bets
+        display_all_hands
         # sleep(3)
         puts ' '
         @player1.display_status
@@ -70,6 +72,7 @@ class Play
         @opponent2.decide_action
         @opponent3.decide_action
         make_bets
+        display_all_hands
         # sleep(1)
         puts ' '
         @player1.display_status
@@ -105,6 +108,8 @@ class Play
         @opponent2.display_winning_combination
         @opponent3.display_winning_combination
         pick_winner
+        gets
+        system clear
         # sleep(1)
         # puts "Pot: #{@round::pot}"
         # @player1.display_chips
@@ -112,6 +117,13 @@ class Play
         # @opponent2.display_chips
         # @opponent3.display_chips
         # finish_round
+    end
+
+    def display_all_hands
+        @player1.display_hand
+        @opponent1.display_hand
+        @opponent2.display_hand
+        @opponent3.display_hand
     end
 
    

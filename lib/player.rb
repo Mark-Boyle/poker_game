@@ -242,8 +242,6 @@ class Player
             menu.choice "Raise"
         end
 
-        puts action
-
         case action
         when "Fold"
             fold
@@ -262,8 +260,6 @@ class Player
             menu.choice "40"
             menu.choice "All In"
         end
-
-        puts amount
 
         case amount
         when "20"
